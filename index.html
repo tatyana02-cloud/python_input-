@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Викторина по Python (7 класс) — Ввод данных input() и числа int()</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .quiz-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 740px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      padding: 32px;
+      position: relative;
+    }
+    .start-screen {
+      text-align: center;
+      padding: 10px 0;
+    }
+    .start-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 20px;
+    }
+    .rules-card {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 20px 24px;
+      text-align: left;
+      margin-bottom: 28px;
+    }
+    .rules-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+    }
+    .rules-list {
+      list-style-type: decimal;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .rules-list li {
+      font-size: 15px;
+      color: #334155;
+      line-height: 1.5;
+    }
+    .btn-primary {
+      background: #334155;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 28px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover {
+      background: #1e293b;
+    }
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #334155;
+      transition: width 0.3s ease;
+    }
+    .header-info {
+      display: flex;
+      justify-content: space-between;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .question-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+    .code-box {
+      background: #1e1e2e;
+      color: #ffffff;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+    }
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .option-btn {
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 15px;
+      color: #334155;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+      line-height: 1.4;
+    }
+    .option-btn:hover:not(:disabled):not(.wrong) {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+    .option-btn.correct {
+      background: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #15803d !important;
+      font-weight: 600;
+    }
+    .option-btn.wrong {
+      background: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      color: #b91c1c !important;
+    }
+    .feedback-box {
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      display: none;
+      line-height: 1.5;
+    }
+    .feedback-box.correct {
+      background: #f0fdf4;
+      border-left: 5px solid #22c55e;
+      color: #166534;
+    }
+    .feedback-box.wrong {
+      background: #fef2f2;
+      border-left: 5px solid #ef4444;
+      color: #991b1b;
+    }
+    .code-subtitle {
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .correct-code-display {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+    .next-btn {
+      background: #334155;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      margin-left: auto;
+      transition: background 0.2s;
+    }
+    .next-btn:hover {
+      background: #1e293b;
+    }
+    .result-screen {
+      display: none;
+      text-align: center;
+      padding: 10px 0;
+    }
+    .result-score {
+      font-size: 44px;
+      font-weight: 800;
+      color: #1e293b;
+      margin: 12px 0;
+    }
+    .result-msg {
+      font-size: 15px;
+      color: #475569;
+      margin-bottom: 24px;
+    }
+    .results-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 16px 0 28px 0;
+    }
+    .badge-item {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .badge-item.correct {
+      background: #dcfce7;
+      color: #15803d;
+      border: 2px solid #22c55e;
+    }
+    .badge-item.wrong {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 2px solid #ef4444;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-card">
+    <div class="start-screen" id="start-screen">
+      <h1 class="start-title">Викторина по Python (7 класс)</h1>
+      <h3 style="color: #64748b; margin-bottom: 20px; font-weight: 600;">Тема: Ввод данных input() и числа int()</h3>
+      <div class="rules-card">
+        <div class="rules-title">Правила прохождения:</div>
+        <ol class="rules-list">
+          <li><strong>Начисление баллов:</strong> 1 балл дается только за правильный ответ с первой попытки.</li>
+          <li><strong>Подробный разбор:</strong> после выбора ответа сразу появляется пояснение работы команды.</li>
+          <li><strong>Переход дальше:</strong> можно перейти к следующему вопросу, только выбрав верный ответ.</li>
+        </ol>
+      </div>
+      <button class="btn-primary" onclick="startQuiz()">Начать викторину</button>
+    </div>
+
+    <div id="quiz-content" style="display: none;">
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress"></div>
+      </div>
+      <div class="header-info">
+        <span id="question-number">Вопрос 1 из 13</span>
+        <span id="score-counter">Баллы: 0</span>
+      </div>
+      <div class="question-title" id="question-text"></div>
+      <div class="code-box" id="code-block" style="display: none;"></div>
+      <div class="options-grid" id="options"></div>
+      <div class="feedback-box" id="feedback"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">Следующий вопрос</button>
+    </div>
+
+    <div class="result-screen" id="result-screen">
+      <h2>Викторина завершена!</h2>
+      <div class="result-score" id="final-score">0 / 13</div>
+      <p class="result-msg" id="final-message"></p>
+      
+      <div style="font-weight: 600; color: #334155; margin-bottom: 8px;">Результаты по заданиям:</div>
+      <div class="results-badges" id="results-badges"></div>
+
+      <button class="btn-primary" onclick="restartQuiz()">Пройти ещё раз</button>
+    </div>
+  </div>
+
+  <script>
+    // Пулы вариантов для динамических заданий
+    const dynamicSlots = {
+      // Слот №5: склеивание строк через input()
+      slot5: [
+        {
+          text: "№5. Пользователь ввел сначала число 4, а затем число 5. Что напечатает программа?",
+          code: "a = input()\nb = input()\nprint(a + b)",
+          options: [
+            { text: "45", comment: "Так как a и b считаны через обычный input(), они являются строками ('4' и '5'). Знак + выполнил склеивание (конкатенацию).", isCorrect: true },
+            { text: "9", comment: "Так как введены строки, знак + склеивает их, а не складывает математически.", isCorrect: false },
+            { text: "4 5", comment: "Склеивание через плюс не добавляет пробелы между строками.", isCorrect: false },
+            { text: "ab", comment: "Переменные написаны без кавычек, поэтому программа подставляет их значения, а не буквы a и b.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№5. Пользователь ввел сначала число 2, а затем число 7. Что напечатает программа?",
+          code: "a = input()\nb = input()\nprint(a + b)",
+          options: [
+            { text: "27", comment: "Переменные a и b хранят строки ('2' и '7'). Оператор + соединяет две строки вместе без математического сложения.", isCorrect: true },
+            { text: "9", comment: "Для математического сложения нужно было преобразовать ввод в целые числа через int().", isCorrect: false },
+            { text: "2 7", comment: "Знак плюс при склеивании строк не разделяет символы пробелами.", isCorrect: false },
+            { text: "Ошибка TypeError", comment: "Сложение двух строковых переменных полностью допустимо в Python.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№5. Пользователь ввел сначала число 8, а затем число 1. Что напечатает программа?",
+          code: "a = input()\nb = input()\nprint(a + b)",
+          options: [
+            { text: "81", comment: "Функция input() возвращает тип str. Строка '8' соединяется со строкой '1', получается '81'.", isCorrect: true },
+            { text: "9", comment: "Обычный input() считывает текст, поэтому знак + выполняет конкатенацию (склеивание), а не сумму.", isCorrect: false },
+            { text: "8 1", comment: "Автоматический пробел между строками при использовании оператора + не вставляется.", isCorrect: false },
+            { text: "ab", comment: "Имена переменных написаны без кавычек, поэтому берутся их строковые значения.", isCorrect: false }
+          ],
+          correctCode: null
+        }
+      ],
+
+      // Слот №7: сложение целых чисел через int(input())
+      slot7: [
+        {
+          text: "№7. Пользователь ввел число 6, а затем число 3. Что выведет эта программа?",
+          code: "a = int(input())\nb = int(input())\nprint(a + b)",
+          options: [
+            { text: "9", comment: "Оба значения переведены в числа через int(). Оператор + сложил их математически: 6 + 3 = 9.", isCorrect: true },
+            { text: "63", comment: "Благодаря int() значения стали числами, поэтому склеивания текста не произойдет.", isCorrect: false },
+            { text: "6 + 3", comment: "Арифметическое выражение внутри print() вычисляется до вывода на экран.", isCorrect: false },
+            { text: "Ошибка TypeError", comment: "Оба значения являются целыми числами (int), операция сложения абсолютно корректна.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№7. Пользователь ввел число 12, а затем число 5. Что выведет эта программа?",
+          code: "a = int(input())\nb = int(input())\nprint(a + b)",
+          options: [
+            { text: "17", comment: "Функция int() превратила строки в настоящие целые числа, поэтому 12 + 5 = 17.", isCorrect: true },
+            { text: "125", comment: "Склеивание '125' произошло бы только без вызова функции int().", isCorrect: false },
+            { text: "12 5", comment: "Команда складывает числа, а не печатает их через пробел.", isCorrect: false },
+            { text: "Ошибка TypeError", comment: "Сложение двух чисел типа int выполняется интерпретатором корректно.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№7. Пользователь ввел число 20, а затем число 30. Что выведет эта программа?",
+          code: "a = int(input())\nb = int(input())\nprint(a + b)",
+          options: [
+            { text: "50", comment: "Обе переменные содержат числа типа int. Результат сложения 20 + 30 равен 50.", isCorrect: true },
+            { text: "2030", comment: "Преобразование int() предотвращает склеивание строк.", isCorrect: false },
+            { text: "20 + 30", comment: "Интерпретатор вычисляет значение выражения до момента вывода.", isCorrect: false },
+            { text: "Ошибка SyntaxError", comment: "Код написан полностью без синтаксических ошибок.", isCorrect: false }
+          ],
+          correctCode: null
+        }
+      ],
+
+      // Слот №10: дублирование строки word * n
+      slot10: [
+        {
+          text: "№10. Пользователь ввел слово «кот». Что напечатает следующая строка кода?",
+          code: "word = input()\nprint(word * 3)",
+          options: [
+            { text: "коткоткот", comment: "Умножение текстовой строки на целое число дублирует (повторяет) ее заданное количество раз.", isCorrect: true },
+            { text: "кот 3", comment: "Знак умножения * дублирует строку, а не приписывает цифру 3.", isCorrect: false },
+            { text: "Ошибка: строки нельзя умножать на числа", comment: "В Python умножение строки на целое число разрешено — это операция повторения.", isCorrect: false },
+            { text: "кот*3", comment: "Код вычисляет результат операции со строкой, а не выводит исходное выражение.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№10. Пользователь ввел слово «да». Что напечатает следующая строка кода?",
+          code: "word = input()\nprint(word * 4)",
+          options: [
+            { text: "дададада", comment: "Оператор умножения со строкой и числом повторяет строку указанное количество раз (4 раза).", isCorrect: true },
+            { text: "да 4", comment: "Умножение строки на число выполняет дублирование, а не дописывание числа.", isCorrect: false },
+            { text: "дада", comment: "Строка дублируется ровно столько раз, на какое число она умножена (4 раза).", isCorrect: false },
+            { text: "Ошибка TypeError", comment: "Операция str * int полностью разрешена в Python.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№10. Пользователь ввел слово «ура». Что напечатает следующая строка кода?",
+          code: "word = input()\nprint(word * 2)",
+          options: [
+            { text: "ураура", comment: "Строка дублируется 2 раза: получается единый текст 'ураура'.", isCorrect: true },
+            { text: "ура 2", comment: "Знак умножения дублирует текст, а не вставляет цифру через пробел.", isCorrect: false },
+            { text: "ура ура", comment: "При умножении строк пробел между повторениями автоматически не добавляется.", isCorrect: false },
+            { text: "Ошибка: умножать слова нельзя", comment: "В Python дублирование строк через оператор * является стандартной возможностью языка.", isCorrect: false }
+          ],
+          correctCode: null
+        }
+      ],
+
+      // Слот №13: совмещение текстового input() и числового int(input())
+      slot13: [
+        {
+          text: "№13. Пользователь ввел имя «Аня» и возраст 13. Что напечатает эта программа?",
+          code: "name = input()\nage = int(input())\n\nnext_age = age + 3\nprint(name, \", через 3 года тебе будет\", next_age)",
+          options: [
+            { text: "Аня , через 3 года тебе будет 16", comment: "Переменная name хранит текст ('Аня'), а age преобразована в число (13). К числу 13 прибавили 3 и получили 16. Все значения выведены через запятые.", isCorrect: true },
+            { text: "Аня , через 3 года тебе будет 133", comment: "Возраст age был обернут в int(), поэтому операция age + 3 выполнила математическое сложение (16), а не склеивание текста '133'.", isCorrect: false },
+            { text: "Ошибка TypeError", comment: "Ошибки нет: переменная age является числом int, сложение корректно, а внутри print() аргументы разделены запятыми, а не знаком плюс.", isCorrect: false },
+            { text: "name , через 3 года тебе будет next_age", comment: "Имена переменных name и next_age написаны без кавычек, поэтому на экран выводятся их значения, а не названия.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№13. Пользователь ввел имя «Максим» и возраст 12. Что напечатает эта программа?",
+          code: "name = input()\nage = int(input())\n\nnext_age = age + 5\nprint(name, \", через 5 лет тебе будет\", next_age)",
+          options: [
+            { text: "Максим , через 5 лет тебе будет 17", comment: "Имя считано строкой через input(), а возраст преобразован в число через int(input()). 12 + 5 = 17. Все переменные корректно переданы в print через запятую.", isCorrect: true },
+            { text: "Максим , через 5 лет тебе будет 125", comment: "Благодаря int() возраст стал числом, поэтому получилось 17, а не склеивание строк '125'.", isCorrect: false },
+            { text: "Ошибка TypeError", comment: "Сложение чисел age + 5 проходит без ошибок, вывод через запятые также безопасен.", isCorrect: false },
+            { text: "Максим, через 5 лет тебе будет 12", comment: "В переменной next_age вычислен новый возраст (12 + 5 = 17), поэтому выводится 17.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№13. Пользователь ввел имя «Дима» и возраст 14. Что напечатает эта программа?",
+          code: "name = input()\nage = int(input())\n\nnext_age = age + 4\nprint(name, \", через 4 года тебе будет\", next_age)",
+          options: [
+            { text: "Дима , через 4 года тебе будет 18", comment: "Строковое имя выводится без изменений, к числу 14 прибавляется 4 (получается 18). Функция print выводит все аргументы через пробел.", isCorrect: true },
+            { text: "Дима , через 4 года тебе будет 144", comment: "Числовая переменная после int() не склеивается как текст со строкой '4', а складывается арифметически.", isCorrect: false },
+            { text: "Ошибка ValueError", comment: "Пользователь ввел число 14, поэтому функция int(input()) срабатывает штатно и без ошибок.", isCorrect: false },
+            { text: "name , через 4 года тебе будет 18", comment: "Переменная name передана без кавычек, поэтому вместо слова name выводится значение «Дима».", isCorrect: false }
+          ],
+          correctCode: null
+        }
+      ]
+    };
+
+    // Статичные задания викторины
+    const staticQuestions = [
+      // 0 -> №1
+      {
+        text: "№1. Для чего в программе на Python вообще вызывается эта команда?",
+        code: "input()",
+        options: [
+          { text: "Чтобы остановить программу и подождать, пока пользователь введет текст с клавиатуры", comment: "Команда input() приостанавливает выполнение кода и ждет, пока человек напечатает текст и нажмет Enter.", isCorrect: true },
+          { text: "Чтобы напечатать ответ на экране монитора", comment: "Для вывода текста и чисел на экран используется print(), а input() отвечает за ввод.", isCorrect: false },
+          { text: "Чтобы очистить память компьютера от лишних переменных", comment: "Команда input() не очищает память — её задача считать данные.", isCorrect: false },
+          { text: "Чтобы автоматически исправить ошибки в коде программы", comment: "Поиск ошибок выполняет программист, а input() просто ожидает действий пользователя.", isCorrect: false }
+        ],
+        correctCode: null
+      },
+      // 1 -> №2
+      {
+        text: "№2. Что произойдет, если написать команду input() саму по себе, без переменной слева?",
+        code: "input()",
+        options: [
+          { text: "Программа подождет ввода текста, но никуда его не сохранит и сразу забудет", comment: "Без знака «=» и переменной введённый текст просто никуда не запишется в памяти компьютера.", isCorrect: true },
+          { text: "Компьютер выдаст синтаксическую ошибку SyntaxError", comment: "Ошибки нет: команду input() можно вызывать без переменной, просто результат потеряется.", isCorrect: false },
+          { text: "Введенный текст автоматически напечатается на экране", comment: "Для печати на экране нужен print(). Сама по себе команда input() ничего не печатает.", isCorrect: false },
+          { text: "Программа пропустит эту строку и пойдет дальше без остановки", comment: "Программа обязательно остановится и будет ждать нажатия клавиши Enter.", isCorrect: false }
+        ],
+        correctCode: null
+      },
+      // 2 -> №3
+      {
+        text: "№3. Что именно происходит при выполнении этой строки кода?",
+        code: "name = input()",
+        options: [
+          { text: "Программа ждет ввода, а затем сохраняет введенный текст в переменную name", comment: "Знак «=» берет введенный текст из input() и укладывает его в именованную переменную-ячейку name.", isCorrect: true },
+          { text: "Программа сразу выводит на экран слово name", comment: "Для вывода текста на экран используется команда print(), а не знак присваивания.", isCorrect: false },
+          { text: "Переменная name навсегда превращается в число 0", comment: "Команда input() сохраняет введенные с клавиатуры символы в виде текста, а не числа.", isCorrect: false },
+          { text: "Программа проверяет, равно ли имя пользователя слову input", comment: "Для сравнения используется двойной знак «==», а один знак «=» сохраняет значение.", isCorrect: false }
+        ],
+        correctCode: null
+      },
+      // 3 -> №4
+      {
+        text: "№4. Пользователь запустил программу и ввел с клавиатуры число 10. Какого типа данные сохранятся в переменной x?",
+        code: "x = input()",
+        options: [
+          { text: "Строка (str)", comment: "Функция input() ВСЕГДА считывает данные как текст (str), даже если введены только цифры.", isCorrect: true },
+          { text: "Целое число (int)", comment: "Без вызова int() компьютер воспринимает ввод как обычный текст в кавычках: '10'.", isCorrect: false },
+          { text: "Дробное число (float)", comment: "Для дробных чисел нужно преобразование float(), по умолчанию input() всегда дает str.", isCorrect: false },
+          { text: "Произойдет ошибка", comment: "Команда input() успешно считывает любые символы с клавиатуры.", isCorrect: false }
+        ],
+        correctCode: null
+      },
+      // 4 -> №6
+      {
+        text: "№6. Какая запись сразу превращает введенное с клавиатуры значение в целое число?",
+        code: null,
+        options: [
+          { text: "n = int(input())", comment: "Функция input() считывает текст, а внешняя команда int() сразу преобразует его в целое число.", isCorrect: true },
+          { text: "n = input(int())", comment: "Так писать нельзя: внутри скобок input() пишется только текст подсказки для ввода.", isCorrect: false },
+          { text: "n = print(int())", comment: "print выводит данные на экран, а не считывает с клавиатуры.", isCorrect: false },
+          { text: "n = input() * int", comment: "Это ошибочная запись, умножать ввод на слово int нельзя.", isCorrect: false }
+        ],
+        correctCode: null
+      },
+      // 5 -> №8
+      {
+        text: "№8. Программа должна запросить имя и поздороваться с пользователем (например: Привет, Иван). Какая ошибка допущена в этом коде?",
+        code: "name = input()\nprint(\"Привет,\", \"name\")",
+        options: [
+          { text: "Имя переменной name написали в кавычках, поэтому напечатается само слово name, а не введенное имя", comment: "Переменные в print() пишутся без кавычек. Если поставить кавычки вокруг \"name\", интерпретатор выведет сам этот текст.", isCorrect: true },
+          { text: "В функции print() нельзя использовать запятую между аргументами", comment: "Запятая в print() абсолютно корректна и разделяет выводимые части.", isCorrect: false },
+          { text: "Переменную name нужно было обязательно обернуть в int()", comment: "Имя — это текст (str), оборачивать его в число int() нельзя.", isCorrect: false },
+          { text: "Команда input() записана с ошибкой", comment: "Синтаксис вызова input() полностью правильный.", isCorrect: false }
+        ],
+        correctCode: "name = input()\nprint(\"Привет,\", name)"
+      },
+      // 6 -> №9
+      {
+        text: "№9. Пользователь ввел цену товара (50) и количество (3). Почему программа завершается ошибкой при умножении?",
+        code: "cen = input()\nkol = input()\nstoim = cen * kol\nprint(stoim)",
+        options: [
+          { text: "Переменные cen и kol остались строками, а в Python нельзя умножать строку на строку", comment: "Команда input() возвращает строковый тип (str). Попытка умножить строку на строку (\"50\" * \"3\") вызывает ошибку TypeError.", isCorrect: true },
+          { text: "Внутри команды print() нельзя выводить переменную stoim", comment: "Переменные можно без проблем выводить через print().", isCorrect: false },
+          { text: "Переменные cen и kol нельзя создавать на разных строках", comment: "Каждый ввод пишется с новой строки — это стандартное правило.", isCorrect: false },
+          { text: "Ошибки нет, программа успешно посчитает и напечатает 150", comment: "Без перевода строк в числа программа выдаст ошибку во время умножения.", isCorrect: false }
+        ],
+        correctCode: "# Способ 1 (перевести в числа сразу при вводе):\ncen = int(input())\nkol = int(input())\nstoim = cen * kol\nprint(stoim)\n\n# Способ 2 (перевести строки в числа при умножении):\ncen = input()\nkol = input()\nstoim = int(cen) * int(kol)\nprint(stoim)"
+      },
+      // 7 -> №11
+      {
+        text: "№11. Пользователь ввел возраст 13, но при запуске программы возникает ошибка. Почему этот код не работает?",
+        code: "age = int(input())\nprint(\"Вам \" + age + \" лет\")",
+        options: [
+          { text: "В строке вывода число age пытаются сложить с текстом через + (нельзя напрямую складывать строку с числом)", comment: "Переменная age имеет числовой тип int, а текст — тип str. Знак + не складывает разные типы данных.", isCorrect: true },
+          { text: "Внутри команды print() вообще запрещено использовать знак плюс", comment: "Знак + в print() использовать можно (например, для склеивания двух строк). Ошибка возникает только из-за попытки сложить разные типы: текст и число.", isCorrect: false },
+          { text: "Функцию int() запрещено использовать вместе с input()", comment: "Конструкция int(input()) абсолютно корректна и часто применяется для считывания целых чисел.", isCorrect: false },
+          { text: "Внутри функции print() нельзя писать слова на русском языке", comment: "Python отлично работает с русскоязычным текстом внутри кавычек.", isCorrect: false }
+        ],
+        correctCode: "# Вариант 1 (через запятые в print):\nprint(\"Вам\", age, \"лет\")\n\n# Вариант 2 (превратить число в строку через str):\nprint(\"Вам \" + str(age) + \" лет\")"
+      },
+      // 8 -> №12
+      {
+        text: "№12. Что произойдет при попытке запустить эту программу, если пользователь введет слово «Привет»?",
+        code: "num = int(input())",
+        options: [
+          { text: "Произойдет ошибка ValueError", comment: "Функция int() может преобразовать текст в число только если введены цифры. Текст «Привет» перевести в число невозможно.", isCorrect: true },
+          { text: "Программа напечатает 0", comment: "Python не подставляет ноль вместо нечисловых строк, а сообщает об ошибке.", isCorrect: false },
+          { text: "Программа напечатает «Привет»", comment: "Программа завершится ошибкой на шаге выполнения int(), до печати дело не дойдет.", isCorrect: false },
+          { text: "Переменная num станет пустой", comment: "Интерпретатор прерывает выполнение из-за невозможности преобразования типов.", isCorrect: false }
+        ],
+        correctCode: null
+      }
+    ];
+
+    const letters = ["А", "Б", "В", "Г"];
+    let questions = [];
+    let currentQuestion = 0;
+    let score = 0;
+    let currentQuestionSolved = false;
+    let attemptsThisQuestion = 0;
+    let questionResults = [];
+
+    function getRandomItem(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function prepareQuestions() {
+      const q1 = staticQuestions[0];
+      const q2 = staticQuestions[1];
+      const q3 = staticQuestions[2];
+      const q4 = staticQuestions[3];
+      const q5 = getRandomItem(dynamicSlots.slot5);
+      const q6 = staticQuestions[4];
+      const q7 = getRandomItem(dynamicSlots.slot7);
+      const q8 = staticQuestions[5];
+      const q9 = staticQuestions[6];
+      const q10 = getRandomItem(dynamicSlots.slot10);
+      const q11 = staticQuestions[7];
+      const q12 = staticQuestions[8];
+      const q13 = getRandomItem(dynamicSlots.slot13);
+
+      const compiledQuestions = [
+        q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13
+      ];
+
+      questions = compiledQuestions.map(q => {
+        return {
+          ...q,
+          options: shuffleArray(q.options)
+        };
+      });
+    }
+
+    function startQuiz() {
+      prepareQuestions();
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('quiz-content').style.display = 'block';
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      currentQuestionSolved = false;
+      attemptsThisQuestion = 0;
+      const q = questions[currentQuestion];
+      
+      document.getElementById('question-number').innerText = `Вопрос ${currentQuestion + 1} из ${questions.length}`;
+      document.getElementById('score-counter').innerText = `Баллы: ${score}`;
+      document.getElementById('progress').style.width = `${(currentQuestion / questions.length) * 100}%`;
+      
+      document.getElementById('question-text').innerText = q.text;
+      
+      const codeBlock = document.getElementById('code-block');
+      if (q.code) {
+        codeBlock.innerText = q.code;
+        codeBlock.style.display = 'block';
+      } else {
+        codeBlock.style.display = 'none';
+      }
+
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = `${letters[index]}) ${opt.text}`;
+        btn.onclick = () => selectOption(index, btn);
+        optionsContainer.appendChild(btn);
+      });
+
+      const feedback = document.getElementById('feedback');
+      feedback.style.display = 'none';
+      feedback.className = 'feedback-box';
+      feedback.innerHTML = '';
+      
+      document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function selectOption(selectedIndex, clickedBtn) {
+      if (currentQuestionSolved) return;
+
+      const q = questions[currentQuestion];
+      const feedback = document.getElementById('feedback');
+      const selectedOptionData = q.options[selectedIndex];
+
+      if (selectedOptionData.isCorrect) {
+        currentQuestionSolved = true;
+
+        const allButtons = document.querySelectorAll('.option-btn');
+        allButtons.forEach((btn, idx) => {
+          btn.disabled = true;
+          if (q.options[idx].isCorrect) {
+            btn.classList.remove('wrong');
+            btn.classList.add('correct');
+          }
+        });
+
+        if (attemptsThisQuestion === 0) {
+          score++;
+          questionResults.push(true);
+        } else {
+          questionResults.push(false);
+        }
+
+        document.getElementById('score-counter').innerText = `Баллы: ${score}`;
+
+        feedback.className = 'feedback-box correct';
+        feedback.style.display = 'block';
+        
+        let feedbackHTML = `<strong>Верно.</strong> ${selectedOptionData.comment}`;
+        if (q.correctCode) {
+          feedbackHTML += `<div class="code-subtitle">Как пишется правильно:</div>` +
+                          `<div class="correct-code-display">${q.correctCode}</div>`;
+        }
+        feedback.innerHTML = feedbackHTML;
+
+        document.getElementById('next-btn').style.display = 'block';
+      } else {
+        attemptsThisQuestion++;
+        clickedBtn.classList.add('wrong');
+        feedback.className = 'feedback-box wrong';
+        feedback.style.display = 'block';
+        feedback.innerHTML = `<strong>Неверно.</strong> ${selectedOptionData.comment}`;
+      }
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('quiz-content').style.display = 'none';
+      const resultScreen = document.getElementById('result-screen');
+      resultScreen.style.display = 'block';
+      
+      document.getElementById('final-score').innerText = `${score} / ${questions.length}`;
+      const msg = document.getElementById('final-message');
+      
+      if (score === questions.length) {
+        msg.innerText = "Превосходно! Тема ввода данных усвоена на 100%, ни одной ошибки с первой попытки!";
+      } else if (score >= 10) {
+        msg.innerText = "Хороший результат! Ты отлично понимаешь ввод данных, но обрати внимание на ошибки при сложении строк и чисел.";
+      } else {
+        msg.innerText = "Стоит ещё раз повторить: input() считывает текст, а для арифметики обязательно нужен int()!";
+      }
+
+      const badgesContainer = document.getElementById('results-badges');
+      badgesContainer.innerHTML = '';
+      questionResults.forEach((isSuccess, idx) => {
+        const badge = document.createElement('div');
+        badge.className = `badge-item ${isSuccess ? 'correct' : 'wrong'}`;
+        badge.innerText = `№${idx + 1}`;
+        badgesContainer.appendChild(badge);
+      });
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      questionResults = [];
+      document.getElementById('result-screen').style.display = 'none';
+      document.getElementById('start-screen').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
